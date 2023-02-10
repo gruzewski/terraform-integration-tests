@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  neo4j:
+    # Only version 4.x is supported by Cartography. Please see https://github.com/lyft/cartography/issues/1032
+    image: neo4j:4.4.17-community
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=none
+      - dbms.connector.bolt.listen_address=0.0.0.0:7687
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - db-data:/data
+
+  moto:
+    image: motoserver/moto:latest
+    restart: on-failure
+    ports:
+      - "8888:5000"
+
+  # cartography:
+  #   image: ghcr.io/lyft/cartography
+  #   command:
+  #     - --neo4j-uri=bolt://neo4j:7687
+  #     - --aws-requested-syncs ec2:instance
+  #   init: true
+  #   restart: on-failure
+  #   depends_on:
+  #     - neo4j
+  #     - moto
+
+volumes:
+  db-data:

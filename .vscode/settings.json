@@ -1,0 +1,22 @@
+{
+    // General settings
+    // Use Prettier as the default formatter. It's good for lots of files (e.g.
+    // Javascript, HTML, JSON, YAML). File type-specific overrides can be
+    // provided.
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.tabSize": 2,
+    // Terraform
+    "[terraform]": {
+      "editor.defaultFormatter": "hashicorp.terraform",
+      "editor.formatOnSave": true,
+      "editor.formatOnSaveMode": "file"
+    },
+    "[terraform-vars]": {
+      "editor.defaultFormatter": "hashicorp.terraform",
+      "editor.formatOnSave": true,
+      "editor.formatOnSaveMode": "file"
+    }
+  }
+  
