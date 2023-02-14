@@ -17,11 +17,11 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    autoscaling = "http://localhost:8888"
-    ec2         = "http://localhost:8888"
-    ecs         = "http://localhost:8888"
-    eks         = "http://localhost:8888"
-    iam         = "http://localhost:8888"
-    s3          = "http://localhost:8888"
+    autoscaling = "http://moto:5000"
+    ec2         = "http://moto:5000"
+    ecs         = "http://moto:5000"
+    eks         = "http://moto:5000"
+    iam         = "http://moto:5000"
+    s3          = "http://moto:5000"
   }
 }

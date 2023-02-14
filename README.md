@@ -1,24 +1,26 @@
-# terraform-integration-tests
+# [WIP] Terraform AWS Provider Testing Framework
 
-## Using Cartography
+This project aims to investigate the feasibility of testing End-2-End Terraform AWS code without creating any real resources.
+It connects existing frameworks like Docker, [Moto](https://github.com/getmoto/moto), or [Cartography](https://github.com/lyft/cartography) to create a user-friendly testing framework.
 
-```sh
-export AWS_PROFILE=local && \
-eval $(terraform output -json | jq -r '. |"export AWS_ACCESS_KEY_ID=\(.cartography_access_key_id.value)\nexport AWS_SECRET_ACCESS_KEY=\(.cartography_access_key_secret.value)"')
-```
+## Motivation
 
-```sh
-cartography \
-  --neo4j-uri bolt://localhost:7687 \
-  --aws-requested-syncs ecs,ec2:launch_templates,ec2:autoscalinggroup,ec2:instance,ec2:load_balancer_v2,ec2:security_group,ec2:vpc \
-  --aws-custom-endpoint='http://localhost:8888/'
-```
+It is challenging to get Terraform code correct without trial and error. The most common approach involves applying implemented changes in a test or development environment to confirm that the code doesn't contain syntax errors and does what it is supposed to do. This is incredibly challenging for any "take-home" exercises where many companies would like to test candidates' familiarity with Terraform without involving any costs on their side.
 
-```sh
-open http://localhost:7474/
-```
+## Technical Details
+
+The most important part of the framework is Moto. It is a mocking system for the Boto3 library. Moto has the option to start a standalone server. By changing Boto3's and Terraform's AWS endpoint URLs, one can redirect all requests to Moto's server, where they will interact with mocked resources.
+
+## Usage
+
+To apply code in mocked AWS environment, run `make all`. To destroy everything, just run `make cleanup`.
+
+TODO: Add info about using Cartography.
 
 ## Using AWS CLI
+
+It is possible to point local AWS CLI tool to Moto's server. It requires installing `awscli-plugin-endpoint` in the same Python
+installation as `aws` cli.
 
 ```sh
 brew install awscli
@@ -37,25 +39,25 @@ cli_legacy_plugin_path = "/opt/homebrew/Cellar/awscli/[AWS_CLI_VERSION]/libexec/
 region = eu-west-1
 output = json
 cloudwatch =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 ec2 =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 ecs =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 eks =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 iam =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 route53 =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 s3 =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 secretsmanager =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 ssm =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 sts =
-    endpoint_url = http://localhost:8888/
+    endpoint_url = http://moto:8888/
 ```
 
 ```sh

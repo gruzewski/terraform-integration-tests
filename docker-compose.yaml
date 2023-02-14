@@ -7,6 +7,11 @@ services:
     environment:
       - NEO4J_AUTH=none
       - dbms.connector.bolt.listen_address=0.0.0.0:7687
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7474"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -19,16 +24,44 @@ services:
     ports:
       - "8888:5000"
 
-  # cartography:
-  #   image: ghcr.io/lyft/cartography
-  #   command:
-  #     - --neo4j-uri=bolt://neo4j:7687
-  #     - --aws-requested-syncs ec2:instance
-  #   init: true
-  #   restart: on-failure
+  terraform:
+    image: hashicorp/terraform:1.3.6
+    entrypoint: /bin/sh
+    command:
+      - /scripts/tf_apply.sh
+    volumes:
+      - ./terraform:/terraform
+      - ./scripts:/scripts
+      - cartography-credentials:/cartography-credentials
+    working_dir: /terraform
+    depends_on:
+      - neo4j
+      - moto
+
+  cartography:
+    image: cartography-custom
+    build: cartography
+    environment:
+      - AWS_REGION=eu-west-1
+    command:
+      - /scripts/cartography_discover.sh
+    volumes:
+      - ./scripts:/scripts
+      - cartography-credentials:/cartography-credentials
+    init: true
+    restart: on-failure
+    depends_on:
+      - neo4j
+      - moto
+
+  # awscli:
+  #   image: awscli-custom
+  #   build: awscli
+  #   environment:
+  #     - AWS_PROFILE=local
   #   depends_on:
-  #     - neo4j
   #     - moto
 
 volumes:
   db-data:
+  cartography-credentials:
